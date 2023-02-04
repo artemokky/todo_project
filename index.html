@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>todos</title>
+</head>
+<body>
+    <div class="todo_app">
+        <!-- заголовок -->
+        <header class="todo-app__header">
+            <h1>TODOS</h1>
+        </header>
+
+        <main class="todo-app__frame">
+            <section class="todo-app__main-controls">
+                <!-- кнопка - свернуть/развернуть задачи -->
+                <button class="roll_btn" title="Свернуть задачи">
+                </button>
+                <!-- поле ввода нового задания -->
+                <input class="new_task" type="text" class="input_task" placeholder="What needs to be done?">
+            </section>
+
+            <section class="todo-app__tasks">
+                <fieldset class="todo_tasks">
+                    <!-- список заданий -->
+                    <ul>
+                        <li class="task_in_list">
+                            <div class="task">
+                                <label>
+                                    <input class="is_done" type="checkbox">
+                                    <label>HTML</label>
+                                </label>
+                                <button class="delete_btn">
+                                    x
+                                </button>
+                            </div>
+                        </li>
+                        <li class="task_in_list">
+                            <div class="task">
+                                <label>
+                                    <input class="is_done" type="checkbox" checked>
+                                    <label>CSS</label>
+                                </label>
+                                <button class="delete_btn">
+                                    x
+                                </button>
+                            </div>
+                        </li>
+                        <li class="task_in_list">
+                            <div class="task">
+                                <label>
+                                    <input class="is_done" type="checkbox">
+                                    <label>JS</label>
+                                </label>
+                                <button class="delete_btn">
+                                    x
+                                </button>
+                            </div>
+                        </li>
+                        <li class="task_in_list">
+                            <div class="task">
+                                <label>
+                                    <input class="is_done" type="checkbox">
+                                    <label>JS tools</label>
+                                </label>
+                                <button class="delete_btn">
+                                    x
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </fieldset>
+            </section>
+
+            <section class="todo-app__actions-bar">
+                <footer class="todo_actions">
+                    <span class="tasks_left">3 items left</span>
+                    <span class="actions_selection" role="radiogroup" aria-label="Task-filter actions">
+                        <!-- radiobtn - показать все задания -->
+                        <input id="show_all" type="radio" name="selector" aria-label="Show all tasks" checked>
+                        <label for="show_all">All</label>
+                        <!-- radiobtn - показать активные задания -->
+                        <input id="show_active" type="radio" name="selector" aria-label="Show active tasks">
+                        <label for="show_active">Active</label>
+                        <!-- radiobtn - показать выполненные задания -->
+                        <input id="show_completed" type="radio" name="selector" aria-label="Show completed tasks">
+                        <label for="show_completed">Completed</label>
+
+                    </span>
+                    <!-- кнопка - удалить выполненные задания -->
+                    <input type="button" value="Clear completed" aria-label="Clear completed tasks">
+                </footer>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
