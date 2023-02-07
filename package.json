@@ -1,0 +1,22 @@
+{
+  "name": "todo_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html",
+    "check": "stylelint \"**/*.css\""
+  },
+  "author": "Artyom Ogorodnikov",
+  "license": "ISC",
+  "dependencies": {
+    "localtunnel": "^2.0.2",
+    "parcel-bundler": "^1.12.5",
+    "sass": "^1.58.0"
+  },
+  "devDependencies": {
+    "stylelint": "^14.16.1",
+    "stylelint-config-standard": "^29.0.0"
+  }
+}
