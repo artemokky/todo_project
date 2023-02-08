@@ -11,6 +11,9 @@
   "author": "Artyom Ogorodnikov",
   "license": "ISC",
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.11.8",
     "localtunnel": "^2.0.2",
     "parcel-bundler": "^1.12.5",
     "sass": "^1.58.0"

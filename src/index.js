@@ -1,9 +1,18 @@
 import {Task} from "./task";
-import {Manager} from "./manager"
+import {TaskModule, UserModule} from "./module"
 import {Viewer} from "./viewer";
+import {createAuthForm} from "./viewer";
+import {User} from "./style/user";
+
+const GENERAL_STORAGE = 'storage';
+
+let token = GENERAL_STORAGE;
 
 const store = new Map();
 
+const modal = createAuthForm("Authorization");
+const logoutBtn = document.getElementById('logout_button');
+const authBtn = document.getElementById('modal_button');
 const ul = document.querySelector('.todo-app__task-list');
 const counterLabel = document.querySelector('.actions-bar__active-counter');
 const form = document.querySelector('.todo-app__create-new');
@@ -13,9 +22,22 @@ const activeButton = document.getElementById('show_active')
 const completedButton = document.getElementById('show_completed')
 const clearCompletedButton = document.querySelector('.clear_completed')
 
+window.addEventListener('load', initStore);
+authBtn.addEventListener('click', openAuthForm);
+logoutBtn.addEventListener('click', logOut);
+form.addEventListener('submit', addTask);
+selectAllButton.addEventListener('click', selectAll);
+allButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
+activeButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
+completedButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
+clearCompletedButton.addEventListener('click', clearCompleted);
+ul.addEventListener('click', selectTaskClick);
+ul.addEventListener('click', deleteTaskClick);
+
+
 async function initStore(){
-    const storeData = await Manager.get();
-    console.log(storeData);
+    store.clear();
+    const storeData = await TaskModule.get(token);
     storeData.forEach(task => {
         store.set(task.id, new Task(task.id, task.description, task.status));
     })
@@ -31,11 +53,11 @@ async function addTask(e) {
     }
 
     const fakeTask = new Task('', this.description.value, false);
-    const response = await Manager.post(fakeTask);
+    const response = await TaskModule.post(token, fakeTask);
     const id = response.name;
 
     const trueTask = new Task(id, this.description.value, false);
-    await Manager.update(id, trueTask);
+    await TaskModule.update(token, id, trueTask);
     store.set(id, trueTask);
 
     console.log(store);
@@ -51,7 +73,7 @@ function clearCompleted() {
             let button = li.querySelector('.delete_btn');
             let buttonClone = button.cloneNode(true);
             button.parentNode.replaceChild(buttonClone, button);
-            Manager.delete(li.id);
+            TaskModule.delete(token, li.id);
             store.delete(li.id);
         }
     });
@@ -74,7 +96,7 @@ function selectTaskClick(event){
             store.get(target.id).status = false;
             checkbox.checked = false;
         }
-        Manager.update(target.id, store.get(target.id));
+        TaskModule.update(token, target.id, store.get(target.id));
     }
 
     Viewer.showTasks(allButton, activeButton, completedButton, ul, store);
@@ -89,7 +111,7 @@ function deleteTaskClick(event){
         let buttonClone = button.cloneNode(true);
         button.parentNode.replaceChild(buttonClone, button);
         store.delete(li.id);
-        Manager.delete(li.id);
+        TaskModule.delete(token, li.id);
         li.remove();
     }
     Viewer.showTasks(allButton, activeButton, completedButton, ul, store);
@@ -103,7 +125,7 @@ function selectAll() {
         if(store.get(li.id).status === false){
             if (span.classList.toggle('done')) {
                 store.get(li.id).status = true;
-                Manager.update(li.id, store.get(li.id));
+                TaskModule.update(token, li.id, store.get(li.id));
                 checkbox.checked = true;
             }
         }
@@ -112,12 +134,52 @@ function selectAll() {
     Viewer.updateCounter(counterLabel, store);
 }
 
-window.addEventListener('load', initStore);
-form.addEventListener('submit', addTask);
-selectAllButton.addEventListener('click', selectAll);
-allButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
-activeButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
-completedButton.addEventListener('click', () => {Viewer.showTasks(allButton, activeButton, completedButton, ul, store);});
-clearCompletedButton.addEventListener('click', clearCompleted);
-ul.addEventListener('click', selectTaskClick);
-ul.addEventListener('click', deleteTaskClick);
+async function logIn(){
+    const inputField = document.getElementById('username');
+    const userName = inputField.value;
+    if(userName === ''){
+        return;
+    }
+
+    const usersStore = await UserModule.get();
+
+    let isRegistered = false;
+    usersStore.forEach(user => {
+        if(isRegistered !== true && user.name === userName){
+            isRegistered = true;
+            token = user.id;
+        }
+    })
+
+    if(isRegistered === false){
+        const fakeUser = new User('', userName);
+        const response = await UserModule.post(fakeUser);
+
+        const id = response.name;
+        token = id;
+        const trueUser = new User(id, userName);
+        await UserModule.update(trueUser.id, trueUser);
+    }
+
+    await initStore();
+
+    inputField.value = '';
+    Viewer.changeAuthStatus('modal_button', 'logout_button', userName);
+    modal.modalWindow.hide();
+
+}
+
+async function logOut(){
+    token = GENERAL_STORAGE;
+    Viewer.changeAuthStatus('logout_button', 'modal_button', 'Common');
+    await initStore();
+}
+
+function openAuthForm(){
+    const submitBtn = document.querySelector(`.${modal.btnName}`);
+
+    modal.modalWindow.show();
+    submitBtn.addEventListener('click', logIn);
+}
+
+
