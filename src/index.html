@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>todos</title>
+    <link href="style/style.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+    <script src="index.js" defer></script>
+</head>
+<body>
+<p class="owner_status" id="owner_name" style="position:absolute;left:0;bottom:0;margin-bottom:0"> Common todo's</p>
+<section class="auth_controllers" style="position:absolute">
+<button class="auth_button" id="modal_button" >Sign in</button>
+<button class="register_button" id="register_button" >Sign up</button>
+<button class="logout_button" id="logout_button" >Log out</button>
+</section>
+
+<div class="todo_app">
+    <header class="todo-app__header">
+        <h1>TODOS</h1>
+    </header>
+
+    <main class="todo-app__frame">
+        <section class="todo-app__main-controls">
+            <input type="button" class="todo-app__select-all" title="Отметить все задачи">
+            <form action="#" method="post" class="todo-app__create-new">
+                <input type="text" class="todo-app__new-task-text" placeholder="What needs to be done?"
+                       aria-label="Текст добавляемой задчи" id="description">
+            </form>
+        </section>
+
+        <section class="todo-app__tasks">
+            <!-- список заданий -->
+            <ul class="todo-app__task-list tasks">
+            </ul>
+        </section>
+
+        <section class="todo-app__actions-bar">
+            <span class="actions-bar__active-counter">0 items left</span>
+            <span class="task_filter" role="radiogroup" aria-label="Task-filter actions">
+                <label class="task_filter_item">
+                    <input class="task-filter_input" id="show_all" type="radio" name="selector"
+                           aria-label="Show all tasks" checked>
+                    <label class="task-filter_text" for="show_all">All</label>
+                </label>
+                <label class="task_filter_item">
+                    <input class="task-filter_input" id="show_active" type="radio" name="selector"
+                           aria-label="Show active tasks">
+                    <label class="task-filter_text" for="show_active">Active</label>
+                </label>
+                <label class="task_filter_item">
+                    <input class="task-filter_input" id="show_completed" type="radio" name="selector"
+                           aria-label="Show completed tasks">
+                    <label class="task-filter_text" for="show_completed">Completed</label>
+                </label>
+            </span>
+            <input class="clear_completed" type="button" value="Clear completed" aria-label="Clear completed tasks">
+        </section>
+    </main>
+</div>
+</body>
+</html>
