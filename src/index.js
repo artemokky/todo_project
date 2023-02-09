@@ -1,8 +1,8 @@
 import {Task} from "./task";
 import {TaskModule, UserModule} from "./module"
-import {Viewer} from "./viewer";
+import {createRegistryForm, Viewer} from "./viewer";
 import {createAuthForm} from "./viewer";
-import {User} from "./style/user";
+import {User} from "./user";
 
 const GENERAL_STORAGE = 'storage';
 
@@ -11,8 +11,10 @@ let token = GENERAL_STORAGE;
 const store = new Map();
 
 const modal = createAuthForm("Authorization");
-const logoutBtn = document.getElementById('logout_button');
+const modal_reg = createRegistryForm("Registration");
 const authBtn = document.getElementById('modal_button');
+const regBtn = document.getElementById('register_button');
+const logoutBtn = document.getElementById('logout_button');
 const ul = document.querySelector('.todo-app__task-list');
 const counterLabel = document.querySelector('.actions-bar__active-counter');
 const form = document.querySelector('.todo-app__create-new');
@@ -24,6 +26,7 @@ const clearCompletedButton = document.querySelector('.clear_completed')
 
 window.addEventListener('load', initStore);
 authBtn.addEventListener('click', openAuthForm);
+regBtn.addEventListener('click', openRegistryForm);
 logoutBtn.addEventListener('click', logOut);
 form.addEventListener('submit', addTask);
 selectAllButton.addEventListener('click', selectAll);
@@ -135,9 +138,59 @@ function selectAll() {
 }
 
 async function logIn(){
-    const inputField = document.getElementById('username');
-    const userName = inputField.value;
-    if(userName === ''){
+    const inputFieldName = document.getElementById('input_username_auth');
+    const inputFieldPassword = document.getElementById('input_password_auth');
+
+    const userName = inputFieldName.value;
+    const userPassword = inputFieldPassword.value;
+    if(userName === '' || userPassword === ''){
+        return;
+    }
+
+    const usersStore = await UserModule.get();
+
+    let isRegistered = false;
+    let isPasswordCorrect = false;
+    usersStore.forEach(user => {
+        if(isRegistered !== true && user.name === userName){
+            isRegistered = true;
+            if(userPassword === user.password) {
+                token = user.id;
+                isPasswordCorrect = true;
+            }
+            else{
+                inputFieldPassword.value = '';
+            }
+        }
+    })
+
+    if(isPasswordCorrect === false){
+        return;
+    }
+
+    if(isRegistered === false){
+        inputFieldName.value = '';
+        inputFieldPassword.value = '';
+        return;
+    }
+
+    await initStore();
+
+    inputFieldName.value = '';
+    inputFieldPassword.value = '';
+
+    Viewer.changeAuthStatusLogIn(userName);
+    modal.modalWindow.hide();
+
+}
+
+async function register(){
+    const inputFieldName = document.getElementById('input_username_reg');
+    const inputFieldPassword = document.getElementById('input_password_reg');
+
+    const userName = inputFieldName.value;
+    const userPassword = inputFieldPassword.value;
+    if(userName === '' || userPassword === ''){
         return;
     }
 
@@ -145,33 +198,32 @@ async function logIn(){
 
     let isRegistered = false;
     usersStore.forEach(user => {
-        if(isRegistered !== true && user.name === userName){
+        if(user.name === userName){
             isRegistered = true;
-            token = user.id;
         }
     })
 
-    if(isRegistered === false){
-        const fakeUser = new User('', userName);
-        const response = await UserModule.post(fakeUser);
-
-        const id = response.name;
-        token = id;
-        const trueUser = new User(id, userName);
-        await UserModule.update(trueUser.id, trueUser);
+    if(isRegistered){
+        inputFieldName.value = '';
+        return;
     }
 
-    await initStore();
+    const fakeUser = new User('', userName, userPassword);
+    const response = await UserModule.post(fakeUser);
 
-    inputField.value = '';
-    Viewer.changeAuthStatus('modal_button', 'logout_button', userName);
-    modal.modalWindow.hide();
+    const id = response.name;
+    const trueUser = new User(id, userName, userPassword);
+    await UserModule.update(trueUser.id, trueUser);
 
+    inputFieldName.value = '';
+    inputFieldPassword.value = '';
+
+    modal_reg.modalWindow.hide();
 }
 
 async function logOut(){
     token = GENERAL_STORAGE;
-    Viewer.changeAuthStatus('logout_button', 'modal_button', 'Common');
+    Viewer.changeAuthStatusLogOut();
     await initStore();
 }
 
@@ -182,4 +234,10 @@ function openAuthForm(){
     submitBtn.addEventListener('click', logIn);
 }
 
+function openRegistryForm(){
+    const submitBtn = document.querySelector(`.${modal_reg.btnName}`);
+
+    modal_reg.modalWindow.show();
+    submitBtn.addEventListener('click', register);
+}
 

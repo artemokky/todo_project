@@ -63,7 +63,7 @@ body {
 .todo-app__select-all {
   height: 64px;
   width: 58px;
-  background-image: url(../images/Roll.svg);
+  background-image: url(../../public/images/Roll.svg);
   background-repeat: no-repeat;
   background-color: transparent;
   background-position: center;
@@ -140,7 +140,7 @@ li {
 }
 
 .task input[type=checkbox]:checked {
-  background-image: url(../images/Done.svg);
+  background-image: url(../../public/images/Done.svg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 18px;
@@ -163,7 +163,7 @@ li {
 .delete_btn {
   width: 40px;
   height: 40px;
-  background-image: url(../images/Delete.svg);
+  background-image: url(../../public/images/Delete.svg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px;

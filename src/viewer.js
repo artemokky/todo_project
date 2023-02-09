@@ -25,14 +25,34 @@ export class Viewer{
         counterLabel.textContent = counter.toString() + ' items left';
     }
 
-    static changeAuthStatus(idHide, idShow, userName){
-        document.getElementById(idHide).style.visibility = 'hidden';
-        document.getElementById(idShow).style.visibility = 'visible';
+    static changeAuthStatusLogIn(userName){
+        const auth_btn = document.getElementById('modal_button');
+        const registry_btn = document.getElementById('register_button');
+        const logout_btn = document.getElementById('logout_button');
+
+        auth_btn.style.position = 'absolute';
+        auth_btn.style.visibility = 'hidden';
+        registry_btn.style.position = 'absolute';
+        registry_btn.style.visibility = 'hidden';
+        logout_btn.style.visibility = 'visible';
+        logout_btn.style.position = 'absolute';
+
         document.getElementById('owner_name').textContent = userName + ' todo\'s';
     }
 
-    static addName(username){
+    static changeAuthStatusLogOut(){
+        const auth_btn = document.getElementById('modal_button');
+        const registry_btn = document.getElementById('register_button');
+        const logout_btn = document.getElementById('logout_button');
 
+        logout_btn.style.visibility = 'hidden';
+        logout_btn.style.position = 'static';
+        registry_btn.style.position = 'static';
+        registry_btn.style.visibility = 'visible';
+        auth_btn.style.position = 'static';
+        auth_btn.style.visibility = 'visible';
+
+        document.getElementById('owner_name').textContent = 'Common todo\'s';
     }
 }
 
@@ -131,19 +151,49 @@ const modal = function (options) {
     }
 };
 
-function createInputField(){
-    return `
-    <input type="text" class="input_username" placeholder="Enter your name here" id="username">
-    `
+function createAuthFields(){
+    return`<div>
+    <input type="text" class="input_username_auth" placeholder="Enter your name here" id="input_username_auth">
+    </div>
+    <div>
+        <input type="password" class="input_password_auth" placeholder="Enter your password here" id="input_password_auth">
+    </div>
+    `;
+}
+
+function createRegisterFields(){
+    return`<div>
+    <input type="text" class="input_username_reg" placeholder="Enter your name here" id="input_username_reg">
+    </div>
+    <div>
+        <input type="password" class="input_password_reg" placeholder="Enter your password here" id="input_password_reg">
+    </div>
+    `;
 }
 
 export function createAuthForm(title) {
-    const submitBtn = 'btn_login'
+    const submitBtn = 'btn_login';
     const modal1 = modal({
         title: `${title}`,
-        content: `<p>${createInputField()}</p>`,
+        content: `<p>${createAuthFields()}</p>`,
         footerButtons: [
             { class: `${submitBtn}`, text: 'Log in', handler: 'modalHandlerOk' }
+        ]
+    });
+
+    return {
+        modalWindow: modal1,
+        btnName : submitBtn
+    };
+}
+
+export function createRegistryForm(title) {
+    const submitBtn = 'btn_register';
+    const modal1 = modal({
+        title: `${title}`,
+        content: `<p>${createRegisterFields()}</p>`,
+        footerButtons: [
+            { class: `${submitBtn}`, text: 'Register', handler: 'modalHandlerOk' }
         ]
     });
 
